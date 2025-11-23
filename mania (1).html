@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>manIA - Adivina la IA</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #f5e6d3 0%, #e8d4c0 100%);
+            padding: 20px;
+        }
+
+        .container {
+            background: #faf6f1;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(139, 115, 85, 0.15);
+            padding: 40px;
+            max-width: 800px;
+            width: 100%;
+        }
+
+        h1 {
+            text-align: center;
+            color: #8b7355;
+            margin-bottom: 10px;
+            font-size: 48px;
+            font-weight: 800;
+            letter-spacing: -1px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #a89968;
+            margin-bottom: 30px;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #f0e4d4;
+            border-radius: 12px;
+            gap: 20px;
+        }
+
+        .stat {
+            text-align: center;
+            flex: 1;
+        }
+
+        .stat-label {
+            font-size: 11px;
+            color: #8b7355;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+            letter-spacing: 1px;
+        }
+
+        .stat-value {
+            font-size: 28px;
+            font-weight: bold;
+            color: #c9956f;
+        }
+
+        .game-area {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .logo-container {
+            background: #e8e8e8;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 25px;
+            box-shadow: 0 8px 20px rgba(139, 115, 85, 0.1);
+            min-height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logo-img {
+            max-width: 150px;
+            max-height: 150px;
+            object-fit: contain;
+        }
+
+        .word-display {
+            font-size: 36px;
+            font-weight: bold;
+            color: #8b7355;
+            letter-spacing: 8px;
+            margin-bottom: 20px;
+            font-family: 'Courier New', monospace;
+            min-height: 50px;
+        }
+
+        .letters-title {
+            font-size: 12px;
+            color: #a89968;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+        }
+
+        .letters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            justify-content: center;
+            margin-bottom: 15px;
+        }
+
+        .letter-btn {
+            width: 40px;
+            height: 40px;
+            border: 2px solid #c9956f;
+            background: white;
+            color: #8b7355;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.2s;
+            font-size: 14px;
+        }
+
+        .letter-btn:hover:not(:disabled) {
+            background: #c9956f;
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .letter-btn:disabled {
+            background: #f0e4d4;
+            color: #a89968;
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+
+        .hearts {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .heart {
+            font-size: 28px;
+            opacity: 0.3;
+            transition: opacity 0.3s;
+        }
+
+        .heart.active {
+            opacity: 1;
+        }
+
+        .progress-text {
+            text-align: center;
+            color: #a89968;
+            font-size: 13px;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .description-box {
+            background: #f0e4d4;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+            font-size: 13px;
+            color: #7a5d3f;
+            line-height: 1.6;
+            display: none;
+        }
+
+        .description-box.show {
+            display: block;
+        }
+
+        .description-title {
+            font-weight: bold;
+            color: #8b7355;
+            margin-bottom: 8px;
+        }
+
+        .game-over {
+            background: #f5d4c8;
+            padding: 25px;
+            border-radius: 12px;
+            text-align: center;
+            margin-bottom: 20px;
+            border-left: 5px solid #d17a67;
+            display: none;
+        }
+
+        .game-over.show {
+            display: block;
+        }
+
+        .game-over-title {
+            color: #a84432;
+            font-size: 24px;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .game-over-text {
+            color: #7a5d3f;
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+
+        .game-complete {
+            background: #e8d7c3;
+            padding: 25px;
+            border-radius: 12px;
+            text-align: center;
+            margin-bottom: 20px;
+            border-left: 5px solid #c9956f;
+            display: none;
+        }
+
+        .game-complete.show {
+            display: block;
+        }
+
+        .game-complete-title {
+            color: #7a5d3f;
+            font-size: 28px;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .game-complete-text {
+            color: #8b7355;
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+
+        .btn {
+            padding: 14px 28px;
+            border: none;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            width: 100%;
+        }
+
+        .btn-next {
+            background: #c9956f;
+            color: white;
+        }
+
+        .btn-next:hover {
+            background: #b8845f;
+        }
+
+        .btn-restart {
+            background: #a89968;
+            color: white;
+        }
+
+        .btn-restart:hover {
+            background: #8b7355;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .info-box {
+            background: #e8d7c3;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 30px;
+            font-size: 13px;
+            color: #7a5d3f;
+            line-height: 1.8;
+        }
+
+        .info-box-title {
+            font-weight: bold;
+            color: #8b7355;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>manIA</h1>
+        <p class="subtitle">Adivina qué modelo de IA o herramienta es</p>
+
+        <div class="stats">
+            <div class="stat">
+                <div class="stat-label">Puntos</div>
+                <div class="stat-value" id="score">0</div>
+            </div>
+            <div class="stat">
+                <div class="stat-label">Vidas</div>
+                <div class="stat-value" id="lives">3</div>
+            </div>
+            <div class="stat">
+                <div class="stat-label">Progreso</div>
+                <div class="stat-value" id="progress">0/39</div>
+            </div>
+        </div>
+
+        <div class="hearts" id="hearts"></div>
+
+        <div class="progress-text" id="progressText"></div>
+
+        <div id="gameContainer" class="game-area">
+            <div class="logo-container">
+                <img id="logoImg" class="logo-img" src="" alt="Logo">
+            </div>
+
+            <div class="word-display" id="wordDisplay"></div>
+
+            <div class="letters-title">Letras disponibles</div>
+            <div class="letters" id="lettersContainer"></div>
+
+            <div class="description-box" id="descriptionBox">
+                <div class="description-title" id="descTitle"></div>
+                <div id="descContent"></div>
+                <div id="descCategory" style="margin-top: 8px; font-size: 12px; opacity: 0.8;"></div>
+                <button class="btn btn-next" onclick="nextQuestion()" style="margin-top: 12px;">Siguiente</button>
+            </div>
+        </div>
+
+        <div id="gameOverContainer">
+            <div class="game-over" id="gameOverBox">
+                <div class="game-over-title">💔 Game Over</div>
+                <div class="game-over-text">¡Se acabaron las vidas! Tu puntuación final: <strong id="finalScore">0</strong> puntos</div>
+            </div>
+            <button class="btn btn-restart" onclick="restartGame()">Volver a Jugar</button>
+        </div>
+
+        <div id="gameCompleteContainer">
+            <div class="game-complete" id="gameCompleteBox">
+                <div class="game-complete-title">🎉 ¡Ganaste!</div>
+                <div class="game-complete-text">¡Completaste manIA con una puntuación de <strong id="completedScore">0</strong> puntos!</div>
+            </div>
+            <button class="btn btn-restart" onclick="restartGame()">Jugar de Nuevo</button>
+        </div>
+
+        <div class="info-box">
+            <div class="info-box-title">💡 Sobre este juego</div>
+            <p>No le cojas tirria a los programas de IA. Son herramientas poderosas diseñadas para ayudarte, mejorar tu productividad y potenciar tu creatividad. Aprende a conocerlas, juega con ellas y descubre cómo pueden transformar tu forma de trabajar.</p>
+        </div>
+    </div>
+
+    <script>
+        const games = [
+            { name: 'ChatGPT', category: 'LLM', description: 'Modelo de lenguaje conversacional de OpenAI. Excelente para tareas generales, escritura, análisis y programación.' },
+            { name: 'Claude', category: 'LLM', description: 'Asistente de IA creado por Anthropic. Destaca en análisis profundo, escritura técnica y tareas complejas.' },
+            { name: 'Gemini', category: 'LLM', description: 'Modelo de IA multimodal de Google. Procesa texto, imágenes, audio y video simultáneamente.' },
+            { name: 'Perplexity', category: 'Motor de Búsqueda IA', description: 'Motor de búsqueda potenciado por IA que proporciona respuestas con fuentes citadas.' },
+            { name: 'Copilot', category: 'Asistente IA', description: 'Asistente de IA de Microsoft integrado en Windows y Office. Potencia tu productividad.' },
+            { name: 'DeepSeek', category: 'LLM', description: 'Modelo de IA chino enfocado en razonamiento lógico y análisis técnico avanzado.' },
+            { name: 'Grok', category: 'LLM', description: 'Modelo de IA de xAI con acceso a tiempo real y un toque de humor en sus respuestas.' },
+            { name: 'Midjourney', category: 'Generador de Imágenes', description: 'Generador de imágenes por IA. Crea arte visual de alta calidad a partir de descripciones.' },
+            { name: 'Flux', category: 'Generador de Imágenes', description: 'Modelo de generación de imágenes rápido y eficiente con excelente calidad visual.' },
+            { name: 'Leonardo AI', category: 'Generador de Imágenes', description: 'Plataforma de IA para crear y editar imágenes con herramientas de upscaling avanzadas.' },
+            { name: 'Ideogram', category: 'Generador de Imágenes', description: 'Generador especializado en texto dentro de imágenes y diseño gráfico de calidad.' },
+            { name: 'Recraft', category: 'Generador de Imágenes', description: 'Herramienta de diseño potenciada por IA para crear gráficos e ilustraciones vectoriales.' },
+            { name: 'Krea', category: 'Generador de Imágenes', description: 'Plataforma para generar y editar imágenes con control creativo avanzado.' },
+            { name: 'Freepik', category: 'Base de Datos de Imágenes', description: 'Plataforma de recursos digitales con IA para buscar y generar imágenes.' },
+            { name: 'Sora', category: 'Generador de Videos', description: 'Modelo de generación de videos de OpenAI. Crea videos de alta calidad desde texto.' },
+            { name: 'Runway', category: 'Editor de Videos IA', description: 'Plataforma de edición de video con herramientas creativas avanzadas potenciadas por IA.' },
+            { name: 'Kaiber', category: 'Generador de Videos', description: 'Generador de videos musicales basado en IA. Crea videos desde música o descripciones.' },
+            { name: 'Pika', category: 'Generador de Videos', description: 'Herramienta rápida y accesible para generar videos con IA.' },
+            { name: 'Kling AI', category: 'Generador de Videos', description: 'Generador de videos chino con tecnología avanzada en creación de contenido visual.' },
+            { name: 'HeyGen', category: 'Avatar IA', description: 'Plataforma para crear videos con avatares virtuales realistas generados por IA.' },
+            { name: 'ElevenLabs', category: 'Síntesis de Voz', description: 'Generador de voz realista y natural. Convierte texto en audio con calidad profesional.' },
+            { name: 'Suno', category: 'Generador de Música', description: 'Generador de música por IA. Crea canciones originales desde descripciones de texto.' },
+            { name: 'Canva', category: 'Diseño Gráfico', description: 'Plataforma de diseño con herramientas de IA para crear gráficos y presentaciones.' },
+            { name: 'Gamma', category: 'Presentaciones', description: 'Herramienta de IA para crear presentaciones hermosas y profesionales automáticamente.' },
+            { name: 'Notion', category: 'Productividad', description: 'Plataforma de organización con IA integrada para gestionar tareas y datos.' },
+            { name: 'NotebookLM', category: 'Análisis de Documentos', description: 'Herramienta de Google para analizar documentos con IA y crear resúmenes.' },
+            { name: 'Kimi', category: 'LLM', description: 'Modelo chino especializado en análisis de largo contexto y resúmenes precisos.' },
+            { name: 'Napkin', category: 'Visualización de Datos', description: 'Herramienta de IA para crear diagramas y esquemas automáticamente.' },
+            { name: 'Pixelcut', category: 'Editor de Imágenes', description: 'Editor potenciado por IA para eliminar fondos y editar fotos profesionalmente.' },
+            { name: 'Lovable', category: 'Desarrollo Web', description: 'Plataforma de IA para crear aplicaciones web sin código de forma visual.' },
+            { name: 'Mathos AI', category: 'Educación', description: 'Asistente especializado en matemáticas y cálculos complejos.' },
+            { name: 'Venice', category: 'LLM', description: 'Modelo de IA con enfoque en privacidad y seguridad en conversaciones.' },
+            { name: 'Meta AI', category: 'LLM', description: 'Asistente de IA de Meta integrado en WhatsApp e Instagram.' },
+            { name: 'Google AI Studio', category: 'Desarrollo IA', description: 'Plataforma de Google para experimentar con modelos de IA y crear aplicaciones.' },
+            { name: 'InVideo', category: 'Editor de Videos IA', description: 'Herramienta de IA para crear videos automáticamente desde guiones.' },
+            { name: 'CapCut', category: 'Editor de Videos', description: 'Editor de videos popular con funciones de IA para edición y efectos.' },
+            { name: 'Hedra', category: 'Avatar IA', description: 'Plataforma para crear avatares de video realistas con IA.' },
+            { name: 'Nano Banana', category: 'Generador de Imágenes', description: 'Generador ligero y rápido de imágenes con IA para arte visual.' },
+            { name: 'Trello', category: 'Gestión de Proyectos', description: 'Plataforma de gestión de tareas y proyectos con funcionalidades de IA integradas.' },
+            { name: 'RStudio', category: 'Desarrollo', description: 'IDE para programación en R con herramientas para análisis de datos y visualización.' },
+            { name: 'VSCode', category: 'Desarrollo', description: 'Editor de código fuente ligero y potente de Microsoft para desarrollo de software.' },
+            { name: 'Python', category: 'Lenguaje de Programación', description: 'Lenguaje de programación versátil usado en IA, análisis de datos y desarrollo web.' },
+            { name: 'Maxmaxdata', category: 'Análisis de Datos', description: 'Herramienta de IA para análisis avanzado de datos y visualización.' }
+        ];
+
+        let currentQuestion = 0;
+        let score = 0;
+        let lives = 3;
+        let gameActive = true;
+        let currentWord = '';
+        let guessedLetters = new Set();
+        let shuffledGames = [];
+
+        const ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+
+        // Función para mezclar array
+        function shuffleArray(array) {
+            const newArray = [...array];
+            for (let i = newArray.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+            }
+            return newArray;
+        }
+
+        function initHearts() {
+            const heartsContainer = document.getElementById('hearts');
+            heartsContainer.innerHTML = '';
+            for (let i = 0; i < 3; i++) {
+                const heart = document.createElement('div');
+                heart.className = `heart ${i < lives ? 'active' : ''}`;
+                heart.textContent = '❤️';
+                heartsContainer.appendChild(heart);
+            }
+        }
+
+        function loadQuestion() {
+            if (currentQuestion >= shuffledGames.length) {
+                endGameComplete();
+                return;
+            }
+
+            const game = shuffledGames[currentQuestion];
+            const logoName = game.name.toLowerCase().replace(/\s+/g, '');
+            document.getElementById('logoImg').src = `logos/${logoName}.png`;
+            
+            currentWord = game.name.toUpperCase();
+            guessedLetters = new Set();
+            
+            displayWord();
+            createLetterButtons();
+            document.getElementById('descriptionBox').classList.remove('show');
+            
+            updateProgress();
+        }
+
+        function displayWord() {
+            const display = currentWord.split('').map(letter => {
+                if (letter === ' ') return ' ';
+                return guessedLetters.has(letter) ? letter : '_';
+            }).join(' ');
+            
+            document.getElementById('wordDisplay').textContent = display;
+        }
+
+        function createLetterButtons() {
+            const container = document.getElementById('lettersContainer');
+            container.innerHTML = '';
+            
+            ALPHABET.forEach(letter => {
+                const btn = document.createElement('button');
+                btn.className = 'letter-btn';
+                btn.textContent = letter;
+                btn.disabled = guessedLetters.has(letter);
+                btn.onclick = () => guessLetter(letter, btn);
+                container.appendChild(btn);
+            });
+        }
+
+        function guessLetter(letter, btn) {
+            if (!gameActive || guessedLetters.has(letter)) return;
+            
+            guessedLetters.add(letter);
+            btn.disabled = true;
+            
+            if (currentWord.includes(letter)) {
+                displayWord();
+                checkWin();
+            } else {
+                lives--;
+                initHearts();
+                if (lives <= 0) {
+                    endGameOver();
+                }
+            }
+        }
+
+        function checkWin() {
+            const wordLetters = new Set(currentWord.split('').filter(l => l !== ' '));
+            if ([...wordLetters].every(letter => guessedLetters.has(letter))) {
+                score += 10;
+                gameActive = false;
+                showSuccess();
+            }
+        }
+
+        function showSuccess() {
+            const game = shuffledGames[currentQuestion];
+            const descBox = document.getElementById('descriptionBox');
+            document.getElementById('descTitle').textContent = '✅ ¡Correcto! ' + game.name;
+            document.getElementById('descContent').textContent = game.description;
+            document.getElementById('descCategory').textContent = '📁 ' + game.category;
+            descBox.classList.add('show');
+        }
+
+        function nextQuestion() {
+            currentQuestion++;
+            gameActive = true;
+            if (currentQuestion >= shuffledGames.length) {
+                endGameComplete();
+            } else {
+                loadQuestion();
+            }
+        }
+
+        function endGameOver() {
+            gameActive = false;
+            document.getElementById('gameContainer').classList.add('hidden');
+            document.getElementById('gameOverBox').classList.add('show');
+            document.getElementById('finalScore').textContent = score;
+        }
+
+        function endGameComplete() {
+            gameActive = false;
+            document.getElementById('gameContainer').classList.add('hidden');
+            document.getElementById('gameCompleteBox').classList.add('show');
+            document.getElementById('completedScore').textContent = score;
+        }
+
+        function updateProgress() {
+            document.getElementById('progress').textContent = `${currentQuestion}/${shuffledGames.length}`;
+            document.getElementById('progressText').textContent = `Pregunta ${currentQuestion + 1} de ${shuffledGames.length}`;
+            document.getElementById('score').textContent = score;
+            document.getElementById('lives').textContent = lives;
+            initHearts();
+        }
+
+        function restartGame() {
+            shuffledGames = shuffleArray(games);
+            currentQuestion = 0;
+            score = 0;
+            lives = 3;
+            gameActive = true;
+            document.getElementById('gameContainer').classList.remove('hidden');
+            document.getElementById('gameOverBox').classList.remove('show');
+            document.getElementById('gameCompleteBox').classList.remove('show');
+            loadQuestion();
+        }
+
+        // Iniciar juego
+        shuffledGames = shuffleArray(games);
+        initHearts();
+        loadQuestion();
+    </script>
+</body>
+</html>
